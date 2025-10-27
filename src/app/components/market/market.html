@@ -1,0 +1,31 @@
+<div *ngIf="cryptoData$ | async as data; else loading">
+  <h2>Kryptopriser (Live)</h2>
+
+  <div class="crypto-card" *ngIf="data.bitcoin">
+    <h3>Bitcoin (BTC)</h3>
+    <p>DKK: {{ data.bitcoin.dkk | currency:'DKK' }}</p>
+    <p>USD: {{ data.bitcoin.usd | currency:'USD' }}</p>
+  </div>
+
+  <div class="crypto-card" *ngIf="data.ethereum">
+    <h3>Ethereum (ETH)</h3>
+    <p>DKK: {{ data.ethereum.dkk | currency:'DKK' }}</p>
+    <p>USD: {{ data.ethereum.usd | currency:'USD' }}</p>
+  </div>
+
+  <div class="crypto-card" *ngIf="data.cardano">
+    <h3>Cardano (ADA)</h3>
+    <p>DKK: {{ data.cardano.dkk | currency:'DKK' }}</p>
+    <p>USD: {{ data.cardano.usd | currency:'USD' }}</p>
+  </div>
+
+   <div class="crypto-card" *ngIf="data.solana">
+    <h3>Solana (SOL)</h3>
+    <p>DKK: {{ data.solana.dkk | currency:'DKK' }}</p>
+    <p>USD: {{ data.solana.usd | currency:'USD' }}</p>
+  </div>
+</div>
+
+<ng-template #loading>
+  <p>Henter friske priser...</p>
+</ng-template>
