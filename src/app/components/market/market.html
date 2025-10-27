@@ -1,5 +1,5 @@
 <div *ngIf="cryptoData$ | async as data; else loading">
-  <h2>Kryptopriser (Live)</h2>
+  <h2>Crypto priser</h2>
 
   <div class="crypto-card" *ngIf="data.bitcoin">
     <h3>Bitcoin (BTC)</h3>
@@ -24,6 +24,13 @@
     <p>DKK: {{ data.solana.dkk | currency:'DKK' }}</p>
     <p>USD: {{ data.solana.usd | currency:'USD' }}</p>
   </div>
+
+ <div class="crypto-card" *ngIf="data.dogecoin">
+    <h3>dogecoin (DOGE)</h3>
+    <p>DKK: {{ data.dogecoin.dkk | currency:'DKK' }}</p>
+    <p>USD: {{ data.dogecoin.usd | currency:'USD' }}</p>
+  </div>
+
 </div>
 
 <ng-template #loading>

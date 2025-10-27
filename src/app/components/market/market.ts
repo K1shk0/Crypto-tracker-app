@@ -24,7 +24,7 @@ export class MarketComponent implements OnInit {
     // Når komponenten starter, kalder vi vores service
     // Bemærk: Vi "subscriber" ikke her. Det lader vi HTML'en om.
     this.cryptoData$ = this.cryptoService.getPrices(
-      ['bitcoin', 'ethereum', 'cardano', 'solana'], // De mønter vi vil se
+      ['bitcoin', 'ethereum', 'cardano', 'solana', 'dogecoin'], // De mønter vi vil se
       ['dkk', 'usd'] // De valutaer vi vil se prisen i
     );
   }
