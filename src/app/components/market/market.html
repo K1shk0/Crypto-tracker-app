@@ -1,38 +1,68 @@
 <div *ngIf="cryptoData$ | async as data; else loading">
-  <h2>Crypto priser</h2>
+  <h2>Crypto priser 💎</h2>
 
-  <div class="crypto-card" *ngIf="data.bitcoin">
-    <h3>Bitcoin (BTC)</h3>
-    <p>DKK: {{ data.bitcoin.dkk | currency:'DKK' }}</p>
-    <p>USD: {{ data.bitcoin.usd | currency:'USD' }}</p>
-  </div>
+  <div class="crypto-container">
 
-  <div class="crypto-card" *ngIf="data.ethereum">
-    <h3>Ethereum (ETH)</h3>
-    <p>DKK: {{ data.ethereum.dkk | currency:'DKK' }}</p>
-    <p>USD: {{ data.ethereum.usd | currency:'USD' }}</p>
-  </div>
+    <div class="crypto-card" *ngIf="data.bitcoin">
+      <h3>Bitcoin (BTC)</h3>
+      <p>DKK: {{ data.bitcoin.dkk | currency:'DKK' }}</p>
+      <p>USD: {{ data.bitcoin.usd | currency:'USD' }}</p>
+      <p>EUR: {{ data.bitcoin.eur | currency:'EUR' }}</p>
 
-  <div class="crypto-card" *ngIf="data.cardano">
-    <h3>Cardano (ADA)</h3>
-    <p>DKK: {{ data.cardano.dkk | currency:'DKK' }}</p>
-    <p>USD: {{ data.cardano.usd | currency:'USD' }}</p>
-  </div>
+    </div>
 
-   <div class="crypto-card" *ngIf="data.solana">
-    <h3>Solana (SOL)</h3>
-    <p>DKK: {{ data.solana.dkk | currency:'DKK' }}</p>
-    <p>USD: {{ data.solana.usd | currency:'USD' }}</p>
-  </div>
+    <div class="crypto-card" *ngIf="data.ethereum">
+      <h3>Ethereum (ETH)</h3>
+      <p>DKK: {{ data.ethereum.dkk | currency:'DKK' }}</p>
+      <p>USD: {{ data.ethereum.usd | currency:'USD' }}</p>
+      <p>EUR: {{ data.ethereum.eur | currency:'EUR' }}</p>
 
- <div class="crypto-card" *ngIf="data.dogecoin">
-    <h3>dogecoin (DOGE)</h3>
-    <p>DKK: {{ data.dogecoin.dkk | currency:'DKK' }}</p>
-    <p>USD: {{ data.dogecoin.usd | currency:'USD' }}</p>
-  </div>
+    </div>
 
-</div>
+    <div class="crypto-card" *ngIf="data.cardano">
+      <h3>Cardano (ADA)</h3>
+      <p>DKK: {{ data.cardano.dkk | currency:'DKK' }}</p>
+      <p>USD: {{ data.cardano.usd | currency:'USD' }}</p>
+      <p>EUR: {{ data.cardano.eur | currency:'EUR' }}</p>
+
+    </div>
+
+    <div class="crypto-card" *ngIf="data.solana">
+      <h3>Solana (SOL)</h3>
+      <p>DKK: {{ data.solana.dkk | currency:'DKK' }}</p>
+      <p>USD: {{ data.solana.usd | currency:'USD' }}</p>
+      <p>EUR: {{ data.solana.eur | currency:'EUR' }}</p>
+
+    </div>
+
+    <div class="crypto-card" *ngIf="data.dogecoin">
+      <h3>Dogecoin (DOGE)</h3>
+      <p>DKK: {{ data.dogecoin.dkk | currency:'DKK' }}</p>
+      <p>USD: {{ data.dogecoin.usd | currency:'USD' }}</p>
+      <p>EUR: {{ data.dogecoin.eur | currency:'EUR' }}</p>
+
+    </div>
+
+    <div class="crypto-card" *ngIf="data.Tether">
+      <h3>Tether (USDT)</h3>
+      <p>DKK: {{ data.Tether.dkk | currency:'DKK' }}</p>
+      <p>USD: {{ data.Tether.usd | currency:'USD' }}</p>
+      <p>EUR: {{ data.tether.eur | currency:'EUR' }}</p>
+
+    </div>
+
+     <div class="crypto-card" *ngIf="data.Polkadot">
+      <h3>Polkadot (DOT)</h3>
+      <p>DKK: {{ data.Polkadot.dkk | currency:'DKK' }}</p>
+      <p>USD: {{ data.Polkadot.usd | currency:'USD' }}</p>
+      <p>EUR: {{ data.polkadot.eur | currency:'EUR' }}</p>
+
+    </div>
+
+  </div> </div>
 
 <ng-template #loading>
-  <p>Henter friske priser...</p>
+  <p class="loading-text">Henter friske priser...</p>
 </ng-template>
+
+
