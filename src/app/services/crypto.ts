@@ -7,24 +7,17 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class CryptoService {
-  private apiUrl = "https://api.coingecko.com/api/v3/simple/price";
+  private apiUrl = "https://api.coingecko.com/api/v3/coins/markets";
 
-  // Vi "injicerer" HttpClient, så vi kan bruge den i denne service
   constructor(private http: HttpClient) { }
 
-  /**
-   * Henter priser for specifikke mønter mod specifikke valutaer.
-   * @param ids En liste af mønt-ID'er (f.eks. ['bitcoin', 'ethereum'])
-   * @param currencies En liste af valutaer (f.eks. ['usd', 'dkk'])
-   */
-  getPrices(ids: string[], currencies: string[]): Observable<any> {
-
-    // Byg query-parametrene korrekt
+  getMarketData(currency: string, ids: string[]): Observable<any> {
     const params = new HttpParams()
+      .set('vs_currency', currency)
       .set('ids', ids.join(','))
-      .set('vs_currencies', currencies.join(','));
+      .set('sparkline', 'true')
+      .set('price_change_percentage', '1h,24h,7d');
 
-    // Lav GET-kaldet og returner den Observable, det giver
     return this.http.get(this.apiUrl, { params: params });
   }
 }
