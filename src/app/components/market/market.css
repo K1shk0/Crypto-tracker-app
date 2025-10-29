@@ -1,7 +1,7 @@
 /* === Global Styling === */
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background-color: #1a1a2e; /* Mørk blå/lilla baggrund */
+  background-color: #121212; /* Lighter dark background */
   color: #e0e0e0;
   padding: 20px;
 }
@@ -12,12 +12,37 @@ h2 {
   color: #ffffff;
   margin-bottom: 40px;
   font-weight: 600;
-  /* Flot tekst-gradient */
-  background-image: linear-gradient(90deg, #00bfff, #9b59b6);
+  background-image: linear-gradient(90deg, #00bfff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-fill-color: transparent;
+}
+
+/* === Sort Buttons === */
+.sort-buttons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.sort-buttons button {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  margin: 0 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.sort-buttons button:hover {
+  background-color: #555;
+}
+
+.sort-buttons button.active {
+  background-color: #00bfff;
 }
 
 /* === Crypto Table Styling === */
@@ -26,14 +51,14 @@ h2 {
   max-width: 1200px;
   margin: 0 auto;
   border-collapse: collapse;
-  background-color: #2a2a3a;
+  background-color: #ffffff;
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
 }
 
 .crypto-table thead tr {
-  background-color: #3c3c54;
+  background-color: #333;
   color: #ffffff;
   text-align: left;
   font-weight: bold;
@@ -46,7 +71,7 @@ h2 {
 }
 
 .crypto-table tbody tr {
-  border-bottom: 1px solid #3c3c54;
+  border-bottom: 1px solid #c7a50f;
   transition: background-color 0.3s ease;
 }
 
@@ -55,7 +80,7 @@ h2 {
 }
 
 .crypto-table tbody tr:hover {
-  background-color: #3c3c54;
+  background-color: #807e7e;
 }
 
 .crypto-table td:first-child {
@@ -79,12 +104,12 @@ h2 {
 }
 
 .positive {
-  color: #26a69a;
+  color: #4caf50; /* Green */
   text-align: right;
 }
 
 .negative {
-  color: #ef5350;
+  color: #f44336; /* Red */
   text-align: right;
 }
 
