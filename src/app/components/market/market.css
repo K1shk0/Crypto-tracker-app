@@ -20,62 +20,72 @@ h2 {
   text-fill-color: transparent;
 }
 
-/* === Grid Container === */
-.crypto-container {
-  display: grid;
-  /* Her er magien:
-    - auto-fit: Laver så mange kolonner, der kan være plads til.
-    - minmax(280px, 1fr): Hver kolonne er *mindst* 280px bred,
-      men må gerne vokse (1fr) for at fylde pladsen ud.
-    Resultat: Responsivt grid uden media queries!
-  */
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 25px; /* Mellemrum mellem kortene */
-  max-width: 1400px;
-  margin: 0 auto; /* Centrerer hele griddet */
-}
-
-/* === Crypto Kort Styling === */
-.crypto-card {
-  background: #2a2a3a; /* Lidt lysere mørk farve */
-  border-radius: 12px;
-  padding: 25px;
-  /* Flot, diskret skygge */
+/* === Crypto Table Styling === */
+.crypto-table {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  border-collapse: collapse;
+  background-color: #2a2a3a;
+  border-radius: 10px;
+  overflow: hidden;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-  /* Giver en fed kant-effekt */
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  /* Tilføjer glidende overgang til hover-effekten */
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* === Hover Effekt === */
-.crypto-card:hover {
-  /* Løfter kortet en smule */
-  transform: translateY(-8px);
-  /* Giver det en "glow" effekt */
-  box-shadow: 0 10px 30px rgba(0, 191, 255, 0.2); /* Deep sky blue glow */
+.crypto-table thead tr {
+  background-color: #3c3c54;
+  color: #ffffff;
+  text-align: left;
+  font-weight: bold;
 }
 
-/* === Indhold i kortet === */
-.crypto-card h3 {
-  margin-top: 0;
-  font-size: 1.7rem;
-  font-weight: 600;
-  color: #00bfff; /* Deep Sky Blue */
-  margin-bottom: 20px;
-  border-bottom: 2px solid #444; /* Fin skillevæg */
-  padding-bottom: 10px;
+.crypto-table th, .crypto-table td {
+  padding: 15px 20px;
+  text-align: left;
+  vertical-align: middle;
 }
 
-.crypto-card p {
-  font-size: 1.1rem;
-  margin: 12px 0;
-  color: #c5c5c5; /* Lidt lysere end standard-tekst */
-  font-weight: 500;
+.crypto-table tbody tr {
+  border-bottom: 1px solid #3c3c54;
+  transition: background-color 0.3s ease;
+}
 
-  /* Sørger for at DKK/USD står pænt */
+.crypto-table tbody tr:last-of-type {
+  border-bottom: none;
+}
+
+.crypto-table tbody tr:hover {
+  background-color: #3c3c54;
+}
+
+.crypto-table td:first-child {
+  font-weight: bold;
+  color: #00bfff;
+}
+
+.coin-info {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+}
+
+.coin-image {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}
+
+.percentage-header {
+  text-align: right;
+}
+
+.positive {
+  color: #26a69a;
+  text-align: right;
+}
+
+.negative {
+  color: #ef5350;
+  text-align: right;
 }
 
 /* === Loading Tekst === */
@@ -87,9 +97,3 @@ h2 {
   font-style: italic;
   font-weight: 300;
 }
-
-/* Gør alle kort klar til en farvet top-kant */
-.crypto-card {
-  border-top: 5px solid transparent; /* Gennemsigtig som standard */
-}
-
