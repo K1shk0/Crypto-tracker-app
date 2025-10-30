@@ -1,7 +1,7 @@
 /* === Global Styling === */
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background-color: #1a1a2e; /* Mørk blå/lilla baggrund */
+  background-color: #121212; /* Lighter dark background */
   color: #e0e0e0;
   padding: 20px;
 }
@@ -12,70 +12,105 @@ h2 {
   color: #ffffff;
   margin-bottom: 40px;
   font-weight: 600;
-  /* Flot tekst-gradient */
-  background-image: linear-gradient(90deg, #00bfff, #9b59b6);
+  background-image: linear-gradient(90deg, #00bfff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-fill-color: transparent;
 }
 
-/* === Grid Container === */
-.crypto-container {
-  display: grid;
-  /* Her er magien:
-    - auto-fit: Laver så mange kolonner, der kan være plads til.
-    - minmax(280px, 1fr): Hver kolonne er *mindst* 280px bred,
-      men må gerne vokse (1fr) for at fylde pladsen ud.
-    Resultat: Responsivt grid uden media queries!
-  */
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 25px; /* Mellemrum mellem kortene */
-  max-width: 1400px;
-  margin: 0 auto; /* Centrerer hele griddet */
-}
-
-/* === Crypto Kort Styling === */
-.crypto-card {
-  background: #2a2a3a; /* Lidt lysere mørk farve */
-  border-radius: 12px;
-  padding: 25px;
-  /* Flot, diskret skygge */
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-  /* Giver en fed kant-effekt */
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  /* Tilføjer glidende overgang til hover-effekten */
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* === Hover Effekt === */
-.crypto-card:hover {
-  /* Løfter kortet en smule */
-  transform: translateY(-8px);
-  /* Giver det en "glow" effekt */
-  box-shadow: 0 10px 30px rgba(0, 191, 255, 0.2); /* Deep sky blue glow */
-}
-
-/* === Indhold i kortet === */
-.crypto-card h3 {
-  margin-top: 0;
-  font-size: 1.7rem;
-  font-weight: 600;
-  color: #00bfff; /* Deep Sky Blue */
-  margin-bottom: 20px;
-  border-bottom: 2px solid #444; /* Fin skillevæg */
-  padding-bottom: 10px;
-}
-
-.crypto-card p {
-  font-size: 1.1rem;
-  margin: 12px 0;
-  color: #c5c5c5; /* Lidt lysere end standard-tekst */
-  font-weight: 500;
-
-  /* Sørger for at DKK/USD står pænt */
+/* === Sort Buttons === */
+.sort-buttons {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.sort-buttons button {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  margin: 0 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.sort-buttons button:hover {
+  background-color: #555;
+}
+
+.sort-buttons button.active {
+  background-color: #00bfff;
+}
+
+/* === Crypto Table Styling === */
+.crypto-table {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.crypto-table thead tr {
+  background-color: #333;
+  color: #ffffff;
+  text-align: left;
+  font-weight: bold;
+}
+
+.crypto-table th, .crypto-table td {
+  padding: 15px 20px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.crypto-table tbody tr {
+  border-bottom: 1px solid #c7a50f;
+  transition: background-color 0.3s ease;
+}
+
+.crypto-table tbody tr:last-of-type {
+  border-bottom: none;
+}
+
+.crypto-table tbody tr:hover {
+  background-color: #807e7e;
+}
+
+.crypto-table td:first-child {
+  font-weight: bold;
+  color: #00bfff;
+}
+
+.coin-info {
+  display: flex;
+  align-items: center;
+}
+
+.coin-image {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}
+
+.percentage-header {
+  text-align: right;
+}
+
+.positive {
+  color: #4caf50; /* Green */
+  text-align: right;
+}
+
+.negative {
+  color: #f44336; /* Red */
+  text-align: right;
 }
 
 /* === Loading Tekst === */
@@ -87,9 +122,3 @@ h2 {
   font-style: italic;
   font-weight: 300;
 }
-
-/* Gør alle kort klar til en farvet top-kant */
-.crypto-card {
-  border-top: 5px solid transparent; /* Gennemsigtig som standard */
-}
-
