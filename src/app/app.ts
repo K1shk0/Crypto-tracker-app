@@ -4,7 +4,7 @@ import { MarketComponent } from "./components/market/market";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, MarketComponent],
+  imports: [MarketComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
