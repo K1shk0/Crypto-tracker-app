@@ -1,0 +1,60 @@
+<div class="register-container">
+
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+    <h2>Opret konto</h2>
+
+    <div class="form-group">
+      <label for="brugernavn">Brugernavn</label>
+      <input
+        id="brugernavn"
+        type="text"
+        formControlName="brugernavn"
+        placeholder="Dit brugernavn">
+
+      <div *ngIf="registerForm.get('brugernavn')?.touched && registerForm.get('brugernavn')?.hasError('required')" class="error">
+        Brugernavn er påkrævet.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input
+        id="email"
+        type="email"
+        formControlName="email"
+        placeholder="din@email.com">
+
+      <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('required')" class="error">
+        Email er påkrævet.
+      </div>
+      <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('email')" class="error">
+        Indtast en gyldig email.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Adgangskode</label>
+      <input
+        id="password"
+        type="password"
+        formControlName="password"
+        placeholder="Din adgangskode">
+
+      <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.hasError('required')" class="error">
+        Adgangskode er påkrævet.
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="error api-error">
+      {{ errorMessage }}
+    </div>
+
+    <button type="submit" [disabled]="registerForm.invalid">Opret konto</button>
+
+    <p class="login-link">
+      Har du allerede en konto? <a [routerLink]="'/login'">Login her</a>
+    </p>
+
+  </form>
+</div>

@@ -1,44 +1,54 @@
-<div *ngIf="cryptoData$ | async as data; else loading">
-  <h2>Crypto priser 💎</h2>
+<div>
+  <h2>💎 Cryptocurrency Prices 💎</h2>
+<header class="market-header">
+  <a [routerLink]="'/profile'">Min Profil</a>
+</header>
+  <div class="sort-buttons">
+    <button (click)="setSortOrder('market_cap_rank')" [class.active]="sortOrder === 'market_cap_rank'">Most Popular</button>
+    <button (click)="setSortOrder('name')" [class.active]="sortOrder === 'name'">Name (A-Z)</button>
+    <button (click)="setSortOrder('price_desc')" [class.active]="sortOrder === 'price_desc'">Price (High to Low)</button>
+    <button (click)="setSortOrder('price_asc')" [class.active]="sortOrder === 'price_asc'">Price (Low to High)</button>
+  </div>
 
-  <table class="crypto-table">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Coin</th>
-        <th>Price</th>
-        <th class="percentage-header">1h %</th>
-        <th class="percentage-header">24h %</th>
-        <th class="percentage-header">7d %</th>
-        <th>Last 7 Days</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let coin of data; let i = index">
-        <td>{{ i + 1 }}</td>
-        <td>
-          <div class="coin-info">
-            <img [src]="coin.image" alt="{{ coin.name }}" class="coin-image">
-            <span>{{ coin.name | titlecase }} ({{ coin.symbol.toUpperCase() }})</span>
-          </div>
-        </td>
-        <td>{{ coin.current_price | currency:'USD' }}</td>
-        <td [ngClass]="getPercentageClass(coin.price_change_percentage_1h_in_currency)">
-          {{ coin.price_change_percentage_1h_in_currency | number:'1.2-2' }}%
-        </td>
-        <td [ngClass]="getPercentageClass(coin.price_change_percentage_24h_in_currency)">
-          {{ coin.price_change_percentage_24h_in_currency | number:'1.2-2' }}%
-        </td>
-        <td [ngClass]="getPercentageClass(coin.price_change_percentage_7d_in_currency)">
-          {{ coin.price_change_percentage_7d_in_currency | number:'1.2-2' }}%
-        </td>
-        <td>
-          <div [innerHTML]="generateSparkline(coin.sparkline_in_7d.price)"></div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
+  <div *ngIf="cryptoData$ | async as data; else loading">
+    <table class="crypto-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Coin</th>
+          <th>Price</th>
+          <th class="percentage-header">1h %</th>
+          <th class="percentage-header">24h %</th>
+          <th class="percentage-header">7d %</th>
+          <th>Last 7 Days</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let coin of data; let i = index">
+          <td>{{ coin.market_cap_rank }}</td>
+          <td>
+            <div class="coin-info">
+              <img [src]="coin.image" alt="{{ coin.name }}" class="coin-image">
+              <span>{{ coin.name | titlecase }} ({{ coin.symbol.toUpperCase() }})</span>
+            </div>
+          </td>
+          <td>{{ coin.current_price | currency:'USD' }}</td>
+          <td [ngClass]="getPercentageClass(coin.price_change_percentage_1h_in_currency)">
+            {{ coin.price_change_percentage_1h_in_currency | number:'1.2-2' }}%
+          </td>
+          <td [ngClass]="getPercentageClass(coin.price_change_percentage_24h_in_currency)">
+            {{ coin.price_change_percentage_24h_in_currency | number:'1.2-2' }}%
+          </td>
+          <td [ngClass]="getPercentageClass(coin.price_change_percentage_7d_in_currency)">
+            {{ coin.price_change_percentage_7d_in_currency | number:'1.2-2' }}%
+          </td>
+          <td>
+            <div [innerHTML]="generateSparkline(coin.sparkline_in_7d.price)"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <ng-template #loading>
