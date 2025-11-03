@@ -3,9 +3,9 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const { Pool } = require('pg');
-const bcrypt = require('bcrypt'); // <-- NY IMPORT
-const jwt = require('jsonwebtoken'); // <-- DENNE SKAL VÆRE DER
-const auth = require('./auth'); // <-- TILFØJ DENNE DØRMAND
+const bcrypt = require('bcrypt'); 
+const jwt = require('jsonwebtoken'); 
+const auth = require('./auth'); 
 
 // --- App Setup ---
 const app = express();
@@ -17,11 +17,12 @@ app.use(express.json());
 
 // --- Database Forbindelse ---
 const pool = new Pool({
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_DATABASE
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD, 
+  database: process.env.DB_NAME,
+  ssl: true
 });
 
 // --- Ruter ---
@@ -39,8 +40,7 @@ app.get('/db-test', async (req, res) => {
     }
 });
 
-// --- NYT: REGISTER ENDPOINT ---
-// SØRG FOR AT DIN /api/register SER SÅDAN HER UD:
+
 app.post('/api/register', async (req, res) => {
     try {
         // 1. Hent ALLE tre værdier
@@ -56,23 +56,21 @@ app.post('/api/register', async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const passwordHash = await bcrypt.hash(password, salt);
 
-        // 4. Indsæt i databasen
+        // 4. Indsæt bruger i databasen
         const newUser = await pool.query(
             'INSERT INTO public."brugere" (brugernavn, email, password_hash) VALUES ($1, $2, $3) RETURNING id, email, brugernavn, created_at',
             [brugernavn, email, passwordHash]
         );
 
-       // 5. SUCCESS! Opret et JWT-token
+        const user = newUser.rows[0];
 
-        // Opret en 'payload' - de data, vi vil gemme i tokenet
-        // Vi gemmer KUN brugerens ID, aldrig adgangskoden.
+        // 5. SUCCESS! Opret et JWT-token
         const payload = {
             user: {
                 id: user.id
             }
         };
 
-        // Underskriv tokenet med din hemmelige nøgle
         jwt.sign(
             payload,
             process.env.JWT_SECRET,
@@ -80,7 +78,7 @@ app.post('/api/register', async (req, res) => {
             (err, token) => {
                 if (err) throw err;
                 // Send KUN tokenet tilbage til Angular
-                res.status(200).json({ token: token });
+                res.status(201).json({ token: token });
             }
         );
 
@@ -121,8 +119,6 @@ app.post('/api/login', async (req, res) => {
             return res.status(401).json({ message: 'Ugyldig email eller adgangskode.' });
         }
 
-        // ----- 5. SUCCESS! DET ER DENNE DEL, DER MANGLER -----
-
         // Opret en 'payload' med brugerens ID
         const payload = {
             user: {
@@ -141,7 +137,6 @@ app.post('/api/login', async (req, res) => {
                 res.status(200).json({ token: token });
             }
         );
-        // ----------------------------------------------------
 
     } catch (error) {
         console.error('Fejl ved login:', error);
@@ -149,26 +144,22 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// --- NYT: HENT BRUGERENS WALLET (BESKYTTET RUTE) ---
 
-// Læg mærke til den nye 'auth' i midten.
-// Det er vores "dørmand", der kører FØR resten af koden.
-// Den sikrer, at kun en logget-ind bruger kan kalde denne rute.
+
+
 
 app.get('/api/wallet', auth, async (req, res) => {
     try {
-        // Fordi 'auth'-dørmanden kørte, har vi nu adgang til req.user.id
-        // Dette ID blev sat ind i tokenet, da brugeren loggede ind.
+        
         const userId = req.user.id;
 
-        // Hent alle rækker fra 'wallets'-tabellen,
-        // der matcher den logget-ind brugers ID.
+        
         const walletQuery = await pool.query(
             'SELECT * FROM public.wallets WHERE user_id = $1',
             [userId]
         );
 
-        // Send pungens indhold tilbage
+        
         res.status(200).json(walletQuery.rows);
 
     } catch (error) {
@@ -177,26 +168,26 @@ app.get('/api/wallet', auth, async (req, res) => {
     }
 });
 
-// --- NYT: TILFØJ/OPDATER COIN I WALLET (BESKYTTET RUTE) ---
+
 app.post('/api/wallet/add', auth, async (req, res) => {
     try {
         const userId = req.user.id;
-        // Hent coin ID og amount fra Angular
+        
         const { coin_id, amount } = req.body;
 
         if (!coin_id || !amount || amount <= 0) {
             return res.status(400).json({ message: 'Coin ID og et gyldigt antal (amount) er påkrævet.' });
         }
 
-        // Tjek om brugeren ALLEREDE ejer denne coin
+        
         const existingCoin = await pool.query(
             'SELECT * FROM public.wallets WHERE user_id = $1 AND coin_id = $2',
             [userId, coin_id]
         );
 
         if (existingCoin.rows.length > 0) {
-            // ----- OPDATER EKSISTERENDE -----
-            // Brugeren ejer den: Læg det nye antal til det gamle
+            
+            
             const newAmount = existingCoin.rows[0].amount + parseFloat(amount);
 
             const updatedCoin = await pool.query(
@@ -205,8 +196,8 @@ app.post('/api/wallet/add', auth, async (req, res) => {
             );
             res.status(200).json(updatedCoin.rows[0]);
         } else {
-            // ----- INDSÆT NY -----
-            // Brugeren ejer den ikke: Opret en ny række
+            
+            
             const newCoin = await pool.query(
                 'INSERT INTO public.wallets (user_id, coin_id, amount) VALUES ($1, $2, $3) RETURNING *',
                 [userId, coin_id, parseFloat(amount)]
@@ -224,3 +215,5 @@ app.post('/api/wallet/add', auth, async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server kører på http://localhost:${PORT}`);
 });
+
+
