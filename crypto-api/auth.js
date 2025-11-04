@@ -6,6 +6,7 @@ module.exports = function(req, res, next) {
     // 1. Hent tokenet fra 'headeren'
     //    (Angular skal sende det som 'x-auth-token')
     const token = req.header('x-auth-token');
+    console.log('Modtaget token:', token); // <-- DEBUGGING
 
     // 2. Tjek om der overhovedet er et token
     if (!token) {
