@@ -16,32 +16,7 @@ h2 {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-}
-
-/* === Sort Buttons === */
-.sort-buttons {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.sort-buttons button {
-  background-color: #333;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  margin: 0 5px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.sort-buttons button:hover {
-  background-color: #555;
-}
-
-.sort-buttons button.active {
-  background-color: #00bfff;
+  text-fill-color: transparent;
 }
 
 /* === Sort Buttons === */
