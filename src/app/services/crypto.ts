@@ -20,16 +20,4 @@ export class CryptoService {
 
     return this.http.get(this.apiUrl, { params: params });
   }
-
-  getTopCoins(currency: string, limit: number = 100): Observable<any> {
-    const params = new HttpParams()
-      .set('vs_currency', currency)
-      .set('order', 'market_cap_desc')
-      .set('per_page', limit.toString())
-      .set('page', '1')
-      .set('sparkline', 'true')
-      .set('price_change_percentage', '1h,24h,7d');
-
-    return this.http.get(this.apiUrl, { params: params });
-  }
 }
