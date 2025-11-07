@@ -1,8 +1,6 @@
 <div>
   <h2>💎 Cryptocurrency Prices 💎</h2>
-<header class="market-header">
-  <a [routerLink]="'/profile'">Min Profil</a>
-</header>
+
   <div class="sort-buttons">
     <button (click)="setSortOrder('market_cap_rank')" [class.active]="sortOrder === 'market_cap_rank'">Most Popular</button>
     <button (click)="setSortOrder('name')" [class.active]="sortOrder === 'name'">Name (A-Z)</button>
