@@ -1,0 +1,129 @@
+/* * Kopiér denne kode ind i BÅDE:
+ * login.component.css OG register.component.css
+ */
+
+/* Containeren der centrerer formen på siden */
+.login-container,
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  min-height: 80vh; /* Giver den lidt højde */
+  box-sizing: border-box;
+}
+
+/* Selve form-boksen */
+form {
+  width: 100%;
+  max-width: 420px;
+  padding: 40px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8e8e8;
+}
+
+/* Overskrift (Login / Opret konto) */
+h2 {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 25px;
+  font-size: 28px;
+  color: #222;
+}
+
+/* Hver gruppe (label + input) */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600; /* Lidt tykkere tekst */
+  color: #555;
+}
+
+/* Input-felter (email, password, etc.) */
+.form-group input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box; /* Vigtig for padding */
+  font-size: 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Flot effekt når man klikker i et felt */
+.form-group input:focus {
+  outline: none;
+  border-color: #0d6efd; /* Matcher knappen */
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+}
+
+/* Knappen (Login / Opret) */
+button {
+  width: 100%;
+  padding: 14px;
+  background-color: #0d6efd; /* En pæn blå */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+/* Hover-effekt på knappen */
+button:hover:not(:disabled) {
+  background-color: #0b5ed7;
+  transform: translateY(-1px); /* Giver et lille løft */
+}
+
+/* Knap når den er disabled */
+button:disabled {
+  background-color: #c0c0c0;
+  cursor: not-allowed;
+}
+
+/* Fejlbeskeder (Validering) */
+.error {
+  color: #e63946; /* En klar rød */
+  font-size: 0.9em;
+  font-weight: 500;
+  margin-top: 6px;
+}
+
+/* Fejlbesked fra serveren (API) */
+.api-error {
+  text-align: center;
+  font-weight: 600;
+  background-color: rgba(230, 57, 70, 0.1);
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+/* Link til den anden side (Opret / Login) */
+.register-link,
+.login-link {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 0.95em;
+  color: #555;
+}
+
+.register-link a,
+.login-link a {
+  color: #0d6efd;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.register-link a:hover,
+.login-link a:hover {
+  text-decoration: underline;
+}
