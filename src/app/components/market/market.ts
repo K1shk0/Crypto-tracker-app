@@ -25,9 +25,7 @@ export class MarketComponent implements OnInit {
   }
 
   loadData(): void {
-    this.cryptoData$ = this.cryptoService.getMarketData('usd', 
-      ['bitcoin', 'ethereum', 'cardano', 'solana', 'dogecoin', 'tether', 'polkadot', 'binancecoin', 'litecoin', 'ripple', 'usd-coin', 'chainlink', 'stellar', 'monero', 'avalanche-2', 'tron', 'crypto-com-chain', 'uniswap', 'cosmos', 'okb', 'hedera-hashgraph', 'filecoin', 'lido-dao', 'shiba-inu', 'dai', 'wrapped-bitcoin', 'near-protocol', 'aptos', 'optimism', 'arbitrum', 'internet-computer', 'vechain', 'quant-network']
-    ).pipe(
+    this.cryptoData$ = this.cryptoService.getTopCoins('usd',  100).pipe(
       map((data: any[]) => this.sortData(data))
     );
   }
