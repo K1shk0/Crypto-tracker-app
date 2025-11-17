@@ -23,7 +23,7 @@ h2 {
 }
 
 .logout-button {
-  background-color: #e63946; /* Rød */
+  background-color: #e63946; /* Red */
   color: white;
   border: none;
   padding: 10px 15px;
@@ -38,8 +38,8 @@ h2 {
   background-color: #2b0bdd;
 }
 
-.btn-tilbage {
-  background-color: #041beb; /* Rød */
+.back-button {
+  background-color: #041beb; /* Blue */
   color: white;
   border: none;
   padding: 10px 15px;
@@ -47,10 +47,10 @@ h2 {
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  text-decoration: none; /* <-- TILFØJ DENNE LINJE */
+  text-decoration: none;
 }
 
-.btn-tilbage:hover {
+.back-button:hover {
   background-color: rgb(11, 117, 238);
 }
 
@@ -74,12 +74,13 @@ h2 {
 .wallet-list {
   border: 1px solid #ddd;
   border-radius: 8px;
-  overflow: hidden; /* Holder hjørnerne pæne */
+  overflow: hidden;
 }
 
 .wallet-item {
   display: flex;
   justify-content: space-between;
+  align-items: center; /* Align items vertically */
   padding: 15px 20px;
   border-bottom: 1px solid #eee;
 }
@@ -96,5 +97,38 @@ h2 {
 
 .wallet-item .coin-id {
   font-weight: 600;
-  text-transform: capitalize; /* Gør 'bitcoin' til 'Bitcoin' */
+  text-transform: capitalize;
+}
+
+.positive {
+  color: #4caf50; /* Green for positive profit */
+  font-weight: 600;
+}
+
+.negative {
+  color: #f44336; /* Red for negative profit/loss */
+  font-weight: 600;
+}
+
+.sell-button {
+  background-color: #ffc107; /* Yellow/Orange for sell */
+  color: #333;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 5px rgba(255, 193, 7, 0.3);
+}
+
+.sell-button:hover {
+  background-color: #e0a800; /* Darker yellow on hover */
+  transform: translateY(-1px);
+}
+
+.sell-button:active {
+  background-color: #c69500; /* Even darker on click */
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(255, 193, 7, 0.4);
 }
