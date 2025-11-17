@@ -74,7 +74,7 @@ app.post('/api/register', async (req, res) => {
         jwt.sign(
             payload,
             process.env.JWT_SECRET,
-            { expiresIn: '3h' }, // Token expires in 3 hours
+            { expiresIn: '24h' }, // Token expires in 24 hours
             (err, token) => {
                 if (err) throw err;
                 // Send ONLY the token back to Angular
@@ -130,7 +130,7 @@ app.post('/api/login', async (req, res) => {
         jwt.sign(
             payload,
             process.env.JWT_SECRET, // Check that JWT_SECRET is in your .env file!
-            { expiresIn: '3h' },
+            { expiresIn: '24h' },
             (err, token) => {
                 if (err) throw err;
                 // Send ONLY the token back
@@ -198,29 +198,16 @@ app.post('/api/wallet/add', auth, async (req, res) => {
         let result;
 
         if (existingCoin.rows.length > 0) {
-            // =======================================================
-            // ▼▼▼ HER VAR FEJLEN ▼▼▼
-            // =======================================================
+            const existingAmount = parseFloat(existingCoin.rows[0].amount);
+            const existingAvgPrice = parseFloat(existingCoin.rows[0].purchase_price);
 
-            // RETTELSE: Konverter database-strenge til tal med parseFloat()
-            const oldAmount = parseFloat(existingCoin.rows[0].amount);
-            const oldPurchasePrice = parseFloat(existingCoin.rows[0].purchase_price);
-
-            // Nu er det tal + tal
-            const newAmount = oldAmount + amountToAdd;
-
-            // Beregn gennemsnitspris (nu med korrekte tal)
-            const oldTotalCost = oldPurchasePrice * oldAmount;
-            const newPurchaseCost = purchasePrice * amountToAdd;
-            const newAveragePurchasePrice = (oldTotalCost + newPurchaseCost) / newAmount;
-
-            // =======================================================
-            // ▲▲▲ RETTELSE SLUT ▲▲▲
-            // =======================================================
+            const newTotalAmount = existingAmount + amountToAdd;
+            const newTotalCost = (existingAvgPrice * existingAmount) + (purchasePrice * amountToAdd);
+            const newAveragePurchasePrice = newTotalCost / newTotalAmount;
 
             const updatedCoin = await client.query(
                 'UPDATE public.wallets SET amount = $1, purchase_price = $2, last_updated = CURRENT_TIMESTAMP WHERE user_id = $3 AND coin_id = $4 RETURNING *',
-                [newAmount, newAveragePurchasePrice, userId, coin_id]
+                [newTotalAmount, newAveragePurchasePrice, userId, coin_id]
             );
 
             result = { data: updatedCoin.rows[0], status: 200 };
