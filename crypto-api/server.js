@@ -171,65 +171,84 @@ app.get('/api/wallet', auth, async (req, res) => {
 
 app.post('/api/wallet/add', auth, async (req, res) => {
     // 1. Opret en "client" til at håndtere transaktionen
-    const client = await pool.connect(); // <-- NY
+    const client = await pool.connect();
 
     try {
         const userId = req.user.id;
-        const { coin_id, amount, purchase_price } = req.body;
+        // Vi parser data fra body med det samme
+        const { coin_id } = req.body;
+        const amountToAdd = parseFloat(req.body.amount);
+        const purchasePrice = parseFloat(req.body.purchase_price);
 
-        if (!coin_id || !amount || amount <= 0 || !purchase_price || purchase_price <= 0) {
+        if (!coin_id || !amountToAdd || amountToAdd <= 0 || !purchasePrice || purchasePrice <= 0) {
+            // Vi ruller ikke tilbage, da vi ikke har startet en transaktion endnu
+            client.release(); // Frigiv clienten
             return res.status(400).json({ message: 'Coin ID, a valid amount, and a valid purchase price are required.' });
         }
 
         // 2. Start transaktionen
-        await client.query('BEGIN'); // <-- NY
+        await client.query('BEGIN');
 
         // 3. Tilføj 'FOR UPDATE' for at låse rækken
-        const existingCoin = await client.query( // <-- Brug 'client'
-            'SELECT * FROM public.wallets WHERE user_id = $1 AND coin_id = $2 FOR UPDATE', // <-- 'FOR UPDATE'
+        const existingCoin = await client.query(
+            'SELECT * FROM public.wallets WHERE user_id = $1 AND coin_id = $2 FOR UPDATE',
             [userId, coin_id]
         );
 
-        let result; // <-- NY (til at gemme resultatet)
+        let result;
 
         if (existingCoin.rows.length > 0) {
-            // ... (din gennemsnitsberegning er perfekt)
-            const oldAmount = existingCoin.rows[0].amount;
-            const oldPurchasePrice = existingCoin.rows[0].purchase_price;
-            const newAmount = oldAmount + parseFloat(amount);
-            const newAveragePurchasePrice =
-                ((oldPurchasePrice * oldAmount) + (purchase_price * parseFloat(amount))) / newAmount;
+            // =======================================================
+            // ▼▼▼ HER VAR FEJLEN ▼▼▼
+            // =======================================================
 
-            const updatedCoin = await client.query( // <-- Brug 'client'
+            // RETTELSE: Konverter database-strenge til tal med parseFloat()
+            const oldAmount = parseFloat(existingCoin.rows[0].amount);
+            const oldPurchasePrice = parseFloat(existingCoin.rows[0].purchase_price);
+
+            // Nu er det tal + tal
+            const newAmount = oldAmount + amountToAdd;
+
+            // Beregn gennemsnitspris (nu med korrekte tal)
+            const oldTotalCost = oldPurchasePrice * oldAmount;
+            const newPurchaseCost = purchasePrice * amountToAdd;
+            const newAveragePurchasePrice = (oldTotalCost + newPurchaseCost) / newAmount;
+
+            // =======================================================
+            // ▲▲▲ RETTELSE SLUT ▲▲▲
+            // =======================================================
+
+            const updatedCoin = await client.query(
                 'UPDATE public.wallets SET amount = $1, purchase_price = $2, last_updated = CURRENT_TIMESTAMP WHERE user_id = $3 AND coin_id = $4 RETURNING *',
                 [newAmount, newAveragePurchasePrice, userId, coin_id]
             );
 
-            result = { data: updatedCoin.rows[0], status: 200 }; // <-- Gem resultat
+            result = { data: updatedCoin.rows[0], status: 200 };
         } else {
-            const newCoin = await client.query( // <-- Brug 'client'
+            // INSERT (denne var fin, men vi bruger de parsede variabler for en sikkerheds skyld)
+            const newCoin = await client.query(
                 'INSERT INTO public.wallets (user_id, coin_id, amount, purchase_price) VALUES ($1, $2, $3, $4) RETURNING *',
-                [userId, coin_id, parseFloat(amount), purchase_price]
+                [userId, coin_id, amountToAdd, purchasePrice]
             );
 
-            result = { data: newCoin.rows[0], status: 201 }; // <-- Gem resultat
+            result = { data: newCoin.rows[0], status: 201 };
         }
 
         // 4. Gennemfør transaktionen
-        await client.query('COMMIT'); // <-- NY
+        await client.query('COMMIT');
 
         // 5. Send svar TILBAGE (først efter COMMIT)
-        res.status(result.status).json(result.data); // <-- NY
+        res.status(result.status).json(result.data);
 
     } catch (error) {
         // 6. Hvis noget fejler, rul tilbage!
-        await client.query('ROLLBACK'); // <-- NY
+        await client.query('ROLLBACK');
 
-        console.error('Error adding to wallet:', error);
+        console.error('Error adding to wallet:', error); // Denne vil nu fange databasefejl
         res.status(500).json({ message: 'Server error' });
     } finally {
         // 7. VIGTIGT: Frigiv altid clienten
-        client.release(); // <-- NY
+        client.release();
     }
 });
 
