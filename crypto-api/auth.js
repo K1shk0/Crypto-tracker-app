@@ -27,6 +27,11 @@ module.exports = function(req, res, next) {
         // Send brugeren videre til det rigtige endpoint (f.eks. /api/wallet)
         next();
     } catch (err) {
+        // ----- HER ER RETTELSEN -----
+        // Logger den specifikke fejl til konsollen
+        console.error('AUTH FEJL:', err.message);
+        // -----------------------------
+
         res.status(401).json({ message: 'Token er ikke gyldigt.' });
     }
 };
