@@ -3,9 +3,9 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const { Pool } = require('pg');
-const bcrypt = require('bcrypt'); 
-const jwt = require('jsonwebtoken'); 
-const auth = require('./auth'); 
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const auth = require('./auth');
 
 // --- App Setup ---
 const app = express();
@@ -20,7 +20,7 @@ const pool = new Pool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD, 
+  password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   ssl: true
 });
@@ -150,16 +150,16 @@ app.post('/api/login', async (req, res) => {
 
 app.get('/api/wallet', auth, async (req, res) => {
     try {
-        
+
         const userId = req.user.id;
 
-        
+
         const walletQuery = await pool.query(
             'SELECT * FROM public.wallets WHERE user_id = $1',
             [userId]
         );
 
-        
+
         res.status(200).json(walletQuery.rows);
 
     } catch (error) {
@@ -170,96 +170,165 @@ app.get('/api/wallet', auth, async (req, res) => {
 
 
 app.post('/api/wallet/add', auth, async (req, res) => {
+    // 1. Opret en "client" til at håndtere transaktionen
+    const client = await pool.connect();
+
     try {
         const userId = req.user.id;
-        
-        const { coin_id, amount, purchase_price } = req.body; // Added purchase_price
+        // Vi parser data fra body med det samme
+        const { coin_id } = req.body;
+        const amountToAdd = parseFloat(req.body.amount);
+        const purchasePrice = parseFloat(req.body.purchase_price);
 
-        if (!coin_id || !amount || amount <= 0 || !purchase_price || purchase_price <= 0) {
+        if (!coin_id || !amountToAdd || amountToAdd <= 0 || !purchasePrice || purchasePrice <= 0) {
+            // Vi ruller ikke tilbage, da vi ikke har startet en transaktion endnu
+            client.release(); // Frigiv clienten
             return res.status(400).json({ message: 'Coin ID, a valid amount, and a valid purchase price are required.' });
         }
 
-        
-        const existingCoin = await pool.query(
-            'SELECT * FROM public.wallets WHERE user_id = $1 AND coin_id = $2',
+        // 2. Start transaktionen
+        await client.query('BEGIN');
+
+        // 3. Tilføj 'FOR UPDATE' for at låse rækken
+        const existingCoin = await client.query(
+            'SELECT * FROM public.wallets WHERE user_id = $1 AND coin_id = $2 FOR UPDATE',
             [userId, coin_id]
         );
 
-        if (existingCoin.rows.length > 0) {
-            // Calculate new average purchase price
-            const oldAmount = existingCoin.rows[0].amount;
-            const oldPurchasePrice = existingCoin.rows[0].purchase_price;
-            const newAmount = oldAmount + parseFloat(amount);
-            const newAveragePurchasePrice = 
-                ((oldPurchasePrice * oldAmount) + (purchase_price * parseFloat(amount))) / newAmount;
+        let result;
 
-            const updatedCoin = await pool.query(
+        if (existingCoin.rows.length > 0) {
+            // =======================================================
+            // ▼▼▼ HER VAR FEJLEN ▼▼▼
+            // =======================================================
+
+            // RETTELSE: Konverter database-strenge til tal med parseFloat()
+            const oldAmount = parseFloat(existingCoin.rows[0].amount);
+            const oldPurchasePrice = parseFloat(existingCoin.rows[0].purchase_price);
+
+            // Nu er det tal + tal
+            const newAmount = oldAmount + amountToAdd;
+
+            // Beregn gennemsnitspris (nu med korrekte tal)
+            const oldTotalCost = oldPurchasePrice * oldAmount;
+            const newPurchaseCost = purchasePrice * amountToAdd;
+            const newAveragePurchasePrice = (oldTotalCost + newPurchaseCost) / newAmount;
+
+            // =======================================================
+            // ▲▲▲ RETTELSE SLUT ▲▲▲
+            // =======================================================
+
+            const updatedCoin = await client.query(
                 'UPDATE public.wallets SET amount = $1, purchase_price = $2, last_updated = CURRENT_TIMESTAMP WHERE user_id = $3 AND coin_id = $4 RETURNING *',
                 [newAmount, newAveragePurchasePrice, userId, coin_id]
             );
-            res.status(200).json(updatedCoin.rows[0]);
+
+            result = { data: updatedCoin.rows[0], status: 200 };
         } else {
-            
-            
-            const newCoin = await pool.query(
+            // INSERT (denne var fin, men vi bruger de parsede variabler for en sikkerheds skyld)
+            const newCoin = await client.query(
                 'INSERT INTO public.wallets (user_id, coin_id, amount, purchase_price) VALUES ($1, $2, $3, $4) RETURNING *',
-                [userId, coin_id, parseFloat(amount), purchase_price]
+                [userId, coin_id, amountToAdd, purchasePrice]
             );
-            res.status(201).json(newCoin.rows[0]);
+
+            result = { data: newCoin.rows[0], status: 201 };
         }
 
+        // 4. Gennemfør transaktionen
+        await client.query('COMMIT');
+
+        // 5. Send svar TILBAGE (først efter COMMIT)
+        res.status(result.status).json(result.data);
+
     } catch (error) {
-        console.error('Error adding to wallet:', error);
+        // 6. Hvis noget fejler, rul tilbage!
+        await client.query('ROLLBACK');
+
+        console.error('Error adding to wallet:', error); // Denne vil nu fange databasefejl
         res.status(500).json({ message: 'Server error' });
+    } finally {
+        // 7. VIGTIGT: Frigiv altid clienten
+        client.release();
     }
 });
 
 app.post('/api/wallet/sell', auth, async (req, res) => {
+    // 1. Valider simple inputs, FØR vi starter en transaktion
+    const { coin_id, amount } = req.body;
+    const userId = req.user.id;
+
+    if (!coin_id || !amount || parseFloat(amount) <= 0) {
+        return res.status(400).json({ message: 'Coin ID and a valid amount are required.' });
+    }
+
+    const amountToSell = parseFloat(amount);
+
+    // 2. Forbind til databasen
+    const client = await pool.connect();
+
     try {
-        const userId = req.user.id;
-        const { coin_id, amount } = req.body;
+        // 3. Start transaktionen
+        await client.query('BEGIN');
 
-        if (!coin_id || !amount || amount <= 0) {
-            return res.status(400).json({ message: 'Coin ID and a valid amount are required.' });
-        }
-
-        const existingCoin = await pool.query(
-            'SELECT * FROM public.wallets WHERE user_id = $1 AND coin_id = $2',
+        // 4. Hent og LÅS den række, vi vil sælge fra
+        const existingCoin = await client.query(
+            'SELECT * FROM public.wallets WHERE user_id = $1 AND coin_id = $2 FOR UPDATE',
             [userId, coin_id]
         );
 
+        // 5. Validering (logik) - Nu *sikkert* inde i transaktionen
         if (existingCoin.rows.length === 0) {
+            // Hvis coinen ikke findes, skal vi ikke gøre noget. Rul tilbage og stop.
+            await client.query('ROLLBACK');
             return res.status(404).json({ message: 'Coin not found in your wallet.' });
         }
 
         const currentAmount = existingCoin.rows[0].amount;
-        const amountToSell = parseFloat(amount);
 
         if (amountToSell > currentAmount) {
+            // Hvis de prøver at sælge mere, end de har, rul tilbage og stop.
+            await client.query('ROLLBACK');
             return res.status(400).json({ message: 'You cannot sell more than you own.' });
         }
 
+        // 6. Udfør salgslogikken (enten UPDATE eller DELETE)
         const newAmount = currentAmount - amountToSell;
+        let responseData;
+        let responseStatus = 200;
 
         if (newAmount === 0) {
-            // Remove the coin if the amount becomes zero
-            await pool.query(
+            // Salg af alt: Fjern rækken fra databasen
+            await client.query(
                 'DELETE FROM public.wallets WHERE user_id = $1 AND coin_id = $2',
                 [userId, coin_id]
             );
-            res.status(200).json({ message: 'Coin successfully sold and removed from wallet.' });
+            responseData = { message: 'Coin successfully sold and removed from wallet.' };
         } else {
-            // Update the amount
-            const updatedCoin = await pool.query(
+            // Delvist salg: Opdater rækken med den nye 'amount'
+            // Vi beholder 'purchase_price', da gennemsnitsprisen ikke ændres ved salg
+            const updatedCoin = await client.query(
                 'UPDATE public.wallets SET amount = $1, last_updated = CURRENT_TIMESTAMP WHERE user_id = $2 AND coin_id = $3 RETURNING *',
                 [newAmount, userId, coin_id]
             );
-            res.status(200).json(updatedCoin.rows[0]);
+            responseData = updatedCoin.rows[0];
         }
 
+        // 7. Gennemfør (COMMIT) transaktionen, da alt gik godt
+        await client.query('COMMIT');
+
+        // 8. Send det succesfulde svar
+        res.status(responseStatus).json(responseData);
+
     } catch (error) {
+        // 9. Håndter uventede fejl (f.eks. database er nede)
+        // Rul alt tilbage, hvis noget fejlede!
+        await client.query('ROLLBACK');
         console.error('Error selling coin:', error);
         res.status(500).json({ message: 'Server error' });
+
+    } finally {
+        // 10. VIGTIGT: Frigiv ALTID clienten tilbage til poolen
+        client.release();
     }
 });
 
