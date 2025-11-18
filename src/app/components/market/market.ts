@@ -123,11 +123,50 @@ export class MarketComponent implements OnInit {
       next: (response) => {
         alert(`Successfully bought ${amount} ${coin.name} at $${coin.current_price}!`);
         console.log('Buy successful:', response);
-        this.router.navigate(['/profile']); // Navigate to profile page
       },
       error: (error) => {
         alert('Failed to buy coin. Please try again.');
         console.error('Buy failed:', error);
+      }
+    });
+  }
+
+  sellCoin(coin: any): void {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    const amountString = prompt(`How much ${coin.name} do you want to sell?`);
+    if (amountString === null || amountString.trim() === '') {
+      return; // User cancelled
+    }
+
+    const amount = parseFloat(amountString);
+    if (isNaN(amount) || amount <= 0) {
+      alert('Please enter a valid positive number.');
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'x-auth-token': token
+    });
+
+    const body = {
+      coin_id: coin.id,
+      amount: amount
+    };
+
+    this.http.post('http://localhost:3000/api/wallet/sell', body, { headers }).subscribe({
+      next: (response) => {
+        alert(`Successfully sold ${amount} ${coin.name}!`);
+        console.log('Sell successful:', response);
+      },
+      error: (error) => {
+        alert(`Failed to sell coin: ${error.error.message || 'Please try again.'}`);
+        console.error('Sell failed:', error);
       }
     });
   }
