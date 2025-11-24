@@ -32,4 +32,11 @@ export class CryptoService {
 
     return this.http.get(this.apiUrl, { params: params });
   }
+
+  getPrices(coinIds: string[]): Observable<any> {
+    const params = new HttpParams()
+      .set('ids', coinIds.join(','))
+      .set('vs_currencies', 'usd');
+    return this.http.get('https://api.coingecko.com/api/v3/simple/price', { params });
+  }
 }
