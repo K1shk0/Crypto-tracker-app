@@ -32,7 +32,7 @@ export class MarketComponent implements OnInit {
   }
 
   loadData(): void {
-    this.cryptoData$ = this.cryptoService.getTopCoins('usd',  100).pipe(
+    this.cryptoData$ = this.cryptoService.getTopCoins('usd',  50).pipe(
       map((data: any[]) => this.sortData(data))
     );
   }
