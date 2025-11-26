@@ -14,11 +14,11 @@ import {
 function passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
   const pw = control.value || '';
 
-  if (pw.length < 8) return { pwWeak: 'Adgangskoden skal være mindst 8 tegn.' };
-  if (!/[A-Z]/.test(pw)) return { pwWeak: 'Mindst ét stort bogstav kræves.' };
-  if (!/[a-z]/.test(pw)) return { pwWeak: 'Mindst ét lille bogstav kræves.' };
-  if (!/[0-9]/.test(pw)) return { pwWeak: 'Mindst ét tal kræves.' };
-  if (!/[!@#$%^&*(),.?":{}|<>]/.test(pw)) return { pwWeak: 'Mindst ét specialtegn kræves.' };
+  if (pw.length < 8) return { pwWeak: 'Password must be at least 8 characters long.' };
+  if (!/[A-Z]/.test(pw)) return { pwWeak: 'At least one uppercase letter is required.' };
+  if (!/[a-z]/.test(pw)) return { pwWeak: 'At least one lowercase letter is required.' };
+  if (!/[0-9]/.test(pw)) return { pwWeak: 'At least one number is required.' };
+  if (!/[!@#$%^&*(),.?":{}|<>]/.test(pw)) return { pwWeak: 'At least one special character is required.' };
 
   return null;
 }
@@ -59,7 +59,7 @@ export class RegisterComponent {
           this.router.navigate(['/login']);
         },
         error: (err) => {
-          this.errorMessage = err.error.message || 'Registrering fejlede. Prøv igen.';
+          this.errorMessage = err.error.message || 'Register failed. Please try again.';
         }
       });
     }

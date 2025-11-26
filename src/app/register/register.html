@@ -2,13 +2,13 @@
 
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
 
-    <h2>Opret konto</h2>
+    <h2>Create Account</h2>
 
     <div class="form-group">
-      <label for="brugernavn">Brugernavn</label>
+      <label for="brugernavn">Username</label>
       <input id="brugernavn" type="text" formControlName="brugernavn">
       <div *ngIf="registerForm.get('brugernavn')?.touched && registerForm.get('brugernavn')?.hasError('required')" class="error">
-        Brugernavn er påkrævet.
+        Username is required.
       </div>
     </div>
 
@@ -16,15 +16,15 @@
       <label for="email">Email</label>
       <input id="email" type="email" formControlName="email">
       <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('required')" class="error">
-        Email er påkrævet.
+        Email is required.
       </div>
       <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('email')" class="error">
-        Indtast en gyldig email.
+        Enter a valid email.
       </div>
     </div>
 
     <div class="form-group">
-      <label for="password">Adgangskode</label>
+      <label for="password">Password</label>
       <input id="password" type="password" formControlName="password">
 
       <!-- PASSWORD STRENGTH ERRORS -->
@@ -41,10 +41,10 @@
       {{ errorMessage }}
     </div>
 
-    <button type="submit" [disabled]="registerForm.invalid">Opret konto</button>
+    <button type="submit" [disabled]="registerForm.invalid">Create Account</button>
 
     <p class="login-link">
-      Har du allerede en konto? <a [routerLink]="'/login'">Login her</a>
+      Already have an account? <a [routerLink]="'/login'">Login here</a>
     </p>
 
   </form>
