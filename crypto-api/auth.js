@@ -6,8 +6,7 @@ module.exports = function(req, res, next) {
     // 1. Hent tokenet fra 'headeren'
     //    (Angular skal sende det som 'x-auth-token')
     const token = req.header('x-auth-token');
-    console.log('Modtaget token:', token); // <-- DEBUGGING
-
+console.log('--- AUTH TEST: Token modtaget ---', token);
     // 2. Tjek om der overhovedet er et token
     if (!token) {
         return res.status(401).json({ message: 'Ingen token, adgang nægtet.' });
@@ -27,6 +26,11 @@ module.exports = function(req, res, next) {
         // Send brugeren videre til det rigtige endpoint (f.eks. /api/wallet)
         next();
     } catch (err) {
+        // ----- HER ER RETTELSEN -----
+        // Logger den specifikke fejl til konsollen
+        console.error('AUTH FEJL:', err.message);
+        // -----------------------------
+
         res.status(401).json({ message: 'Token er ikke gyldigt.' });
     }
 };

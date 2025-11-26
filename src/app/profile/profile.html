@@ -1,13 +1,13 @@
 <div class="profile-container">
-  <h2>Min Profil & Pung</h2>
+  <h2>My Profile & Wallet</h2>
 
   <div class="nav-links">
-    <a [routerLink]="'/market'">Tilbage til Market</a>
-    <button (click)="logout()" class="logout-button">Log ud</button>
+    <a [routerLink]="'/market'" class="back-button">Back to Market</a>
+    <button (click)="logout()" class="logout-button">Logout</button>
   </div>
 
   <div *ngIf="isLoading" class="loading">
-    Henter din pung...
+    Fetching your wallet...
   </div>
 
   <div *ngIf="errorMessage" class="error api-error">
@@ -16,25 +16,36 @@
 
   <div *ngIf="!isLoading && !errorMessage" class="wallet">
 
-    <h3>Min Beholdning</h3>
+    <h3>My Holdings</h3>
 
     <div *ngIf="walletItems.length === 0" class="empty-wallet">
-      Din pung er tom. Gå til market for at tilføje coins.
+      Your wallet is empty. Go to market to add coins.
     </div>
 
-    <div *ngIf="walletItems.length > 0" class="wallet-list">
+      <div *ngIf="walletItems.length > 0" class="wallet-list">
 
-      <div class="wallet-item header">
-        <span>Coin</span>
-        <span>Antal (Amount)</span>
+        <div class="wallet-item header">
+          <span>Coin</span>
+          <span>Action</span>
+          <span>Amount</span>
+          <span>Purchase Price</span>
+          <span>Current Price</span>
+          <span>Profit/Loss</span>
+        </div>
+
+        <div *ngFor="let item of walletItems" class="wallet-item">
+          <span class="coin-id">{{ item.coin_id | titlecase }}</span>
+          <button (click)="sellCoin(item)" class="sell-button">Sell</button>
+          <span>{{ item.amount }}</span>
+          <span>{{ item.purchase_price | currency:'USD' }}</span>
+          <span>{{ item.currentPrice | currency:'USD' }}</span>
+          <span [ngClass]="{'positive': item.profit > 0, 'negative': item.profit < 0}">
+            {{ item.profit | currency:'USD' }}
+          </span>
+        </div>
+
+
       </div>
-
-      <div *ngFor="let item of walletItems" class="wallet-item">
-        <span class="coin-id">{{ item.coin_id }}</span>
-        <span>{{ item.amount }}</span>
-      </div>
-
-    </div>
   </div>
 
 </div>
