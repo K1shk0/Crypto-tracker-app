@@ -3,33 +3,46 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import {
-  ReactiveFormsModule, // <-- Vigtig for formularer
+  ReactiveFormsModule,
   FormBuilder,
-  Validators
+  Validators,
+  AbstractControl,
+  ValidationErrors
 } from '@angular/forms';
+
+// ---- PASSWORD VALIDATOR ----
+function passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
+  const pw = control.value || '';
+
+  if (pw.length < 8) return { pwWeak: 'Adgangskoden skal være mindst 8 tegn.' };
+  if (!/[A-Z]/.test(pw)) return { pwWeak: 'Mindst ét stort bogstav kræves.' };
+  if (!/[a-z]/.test(pw)) return { pwWeak: 'Mindst ét lille bogstav kræves.' };
+  if (!/[0-9]/.test(pw)) return { pwWeak: 'Mindst ét tal kræves.' };
+  if (!/[!@#$%^&*(),.?":{}|<>]/.test(pw)) return { pwWeak: 'Mindst ét specialtegn kræves.' };
+
+  return null;
+}
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule, // <-- Importer her
-    RouterLink           // <-- Til "Login her" linket
+    ReactiveFormsModule,
+    RouterLink
   ],
   templateUrl: './register.html',
   styleUrl: './register.css'
 })
 export class RegisterComponent {
-  // Dependency Injection
   private http = inject(HttpClient);
   private router = inject(Router);
   private fb = inject(FormBuilder);
 
-  // Definerer vores register-formular (med 'brugernavn')
   registerForm = this.fb.group({
-    brugernavn: ['', Validators.required], // <-- Det nye felt
+    brugernavn: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required]
+    password: ['', [Validators.required, passwordStrengthValidator]]
   });
 
   errorMessage: string | null = null;
@@ -38,23 +51,14 @@ export class RegisterComponent {
     this.errorMessage = null;
 
     if (this.registerForm.valid) {
-      // Sæt den korrekte API-sti
-      const apiUrl = 'http://localhost:3000/api/register'; // <-- RETTET STI
+      const apiUrl = 'http://localhost:3000/api/register';
       const formData = this.registerForm.value;
 
       this.http.post<any>(apiUrl, formData).subscribe({
-
-        next: (response) => {
-          // ----- SUCCES! -----
-          console.log('Registrering succesfuld', response);
-
-          // Naviger brugeren til LOGIN-siden, så de kan logge ind
-          this.router.navigate(['/login']); // <-- RETTET REDIRECT
+        next: () => {
+          this.router.navigate(['/login']);
         },
-
         error: (err) => {
-          // Håndter fejl (f.eks. "Email er allerede i brug")
-          console.error('Registrerings-fejl:', err);
           this.errorMessage = err.error.message || 'Registrering fejlede. Prøv igen.';
         }
       });

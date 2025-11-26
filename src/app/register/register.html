@@ -6,12 +6,7 @@
 
     <div class="form-group">
       <label for="brugernavn">Brugernavn</label>
-      <input
-        id="brugernavn"
-        type="text"
-        formControlName="brugernavn"
-        placeholder="Dit brugernavn">
-
+      <input id="brugernavn" type="text" formControlName="brugernavn">
       <div *ngIf="registerForm.get('brugernavn')?.touched && registerForm.get('brugernavn')?.hasError('required')" class="error">
         Brugernavn er påkrævet.
       </div>
@@ -19,12 +14,7 @@
 
     <div class="form-group">
       <label for="email">Email</label>
-      <input
-        id="email"
-        type="email"
-        formControlName="email"
-        placeholder="din@email.com">
-
+      <input id="email" type="email" formControlName="email">
       <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('required')" class="error">
         Email er påkrævet.
       </div>
@@ -35,11 +25,12 @@
 
     <div class="form-group">
       <label for="password">Adgangskode</label>
-      <input
-        id="password"
-        type="password"
-        formControlName="password"
-        placeholder="Din adgangskode">
+      <input id="password" type="password" formControlName="password">
+
+      <!-- PASSWORD STRENGTH ERRORS -->
+      <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.errors?.['pwWeak']" class="error">
+        {{ registerForm.get('password')?.errors?.['pwWeak'] }}
+      </div>
 
       <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.hasError('required')" class="error">
         Adgangskode er påkrævet.
