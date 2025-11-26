@@ -1,7 +1,7 @@
 <div>
   <h2>💎 Cryptocurrency Prices 💎</h2>
 <header class="market-header">
-  <a [routerLink]="'/profile'">Min Profil</a>
+  <a [routerLink]="'/profile'">My Profile</a>
 </header>
   <div class="sort-buttons">
     <button (click)="setSortOrder('market_cap_rank')" [class.active]="sortOrder === 'market_cap_rank'">Most Popular</button>
@@ -16,6 +16,7 @@
         <tr>
           <th>#</th>
           <th>Coin</th>
+          <th>Action</th>
           <th>Price</th>
           <th class="percentage-header">1h %</th>
           <th class="percentage-header">24h %</th>
@@ -32,6 +33,7 @@
               <span>{{ coin.name | titlecase }} ({{ coin.symbol.toUpperCase() }})</span>
             </div>
           </td>
+          <td><button class="buy-button" (click)="buyCoin(coin)">Buy</button></td>
           <td>{{ coin.current_price | currency:'USD' }}</td>
           <td [ngClass]="getPercentageClass(coin.price_change_percentage_1h_in_currency)">
             {{ coin.price_change_percentage_1h_in_currency | number:'1.2-2' }}%
@@ -52,5 +54,5 @@
 </div>
 
 <ng-template #loading>
-  <p class="loading-text">Henter friske priser...</p>
+  <p class="loading-text">Fetching fresh prices...</p>
 </ng-template>

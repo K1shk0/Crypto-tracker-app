@@ -167,3 +167,26 @@ h2 {
   transform: translateY(-2px);
   box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3);
 }
+
+.buy-button {
+  background-color: #00bfff; /* A vibrant blue */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 191, 255, 0.3);
+}
+
+.buy-button:hover {
+  background-color: #0099cc; /* Darker blue on hover */
+  transform: translateY(-1px);
+}
+
+.buy-button:active {
+  background-color: #0077a3; /* Even darker on click */
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 191, 255, 0.4);
+}
