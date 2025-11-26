@@ -9,7 +9,7 @@
   justify-content: center;
   align-items: center;
   padding: 40px;
-  min-height: 80vh; /* Giver den lidt højde */
+  min-height: 80vh;
   box-sizing: border-box;
 }
 
@@ -24,7 +24,6 @@ form {
   border: 1px solid #e8e8e8;
 }
 
-/* Overskrift (Login / Opret konto) */
 h2 {
   text-align: center;
   margin-top: 0;
@@ -41,33 +40,30 @@ h2 {
 .form-group label {
   display: block;
   margin-bottom: 8px;
-  font-weight: 600; /* Lidt tykkere tekst */
+  font-weight: 600;
   color: #555;
 }
 
-/* Input-felter (email, password, etc.) */
 .form-group input {
   width: 100%;
   padding: 12px 15px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  box-sizing: border-box; /* Vigtig for padding */
+  box-sizing: border-box;
   font-size: 16px;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* Flot effekt når man klikker i et felt */
 .form-group input:focus {
   outline: none;
-  border-color: #0d6efd; /* Matcher knappen */
+  border-color: #0d6efd;
   box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
 }
 
-/* Knappen (Login / Opret) */
 button {
   width: 100%;
   padding: 14px;
-  background-color: #0d6efd; /* En pæn blå */
+  background-color: #0d6efd;
   color: white;
   border: none;
   border-radius: 8px;
@@ -77,27 +73,25 @@ button {
   transition: background-color 0.2s, transform 0.1s;
 }
 
-/* Hover-effekt på knappen */
 button:hover:not(:disabled) {
   background-color: #0b5ed7;
-  transform: translateY(-1px); /* Giver et lille løft */
+  transform: translateY(-1px);
 }
 
-/* Knap når den er disabled */
 button:disabled {
   background-color: #c0c0c0;
   cursor: not-allowed;
 }
 
-/* Fejlbeskeder (Validering) */
+/* Fejlbeskeder */
 .error {
-  color: #e63946; /* En klar rød */
+  color: #e63946;
   font-size: 0.9em;
   font-weight: 500;
   margin-top: 6px;
 }
 
-/* Fejlbesked fra serveren (API) */
+/* Fejlbesked fra API */
 .api-error {
   text-align: center;
   font-weight: 600;
@@ -107,7 +101,6 @@ button:disabled {
   margin-bottom: 15px;
 }
 
-/* Link til den anden side (Opret / Login) */
 .register-link,
 .login-link {
   text-align: center;
